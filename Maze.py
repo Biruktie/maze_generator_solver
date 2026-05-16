@@ -41,38 +41,6 @@ class Maze:
         # Log of the moves taken during generation, useful for visualization
         self.action_log = []  # Stores tuples of (current_cell, next_cell, action_type) where action_type can be "move" or "backtrack" or "cycle"
 
-    def create_opening(self, position):
-        row, col = position
-
-        possible_walls = []
-
-        # Check which maze boundary the cell touches
-
-        if row == 0:
-            possible_walls.append(Direction.TOP)
-
-        if row == self.rows - 1:
-            possible_walls.append(Direction.BOTTOM)
-
-        if col == 0:
-            possible_walls.append(Direction.LEFT)
-
-        if col == self.cols - 1:
-            possible_walls.append(Direction.RIGHT)
-
-        # If cell is not on boundary we assign an opening on the top by default
-        if not possible_walls:
-            print(f"Cell {position} is not on the boundary, so we create an opening on the top by default")
-            return Direction.TOP
-
-        # Randomly choose one valid outer wall
-        opening_direction = random.choice(possible_walls)
-
-        # Remove that wall
-        self.grid[row][col].walls[opening_direction] = False
-
-        return opening_direction
-
     # Added for testing to generate and observe the final maze 
     def generate_maze(self):
         while not self.maze_generated:
@@ -165,4 +133,51 @@ class Maze:
 
             return (base_cell, neighbor)
 
+    def create_opening(self, position):
+        row, col = position
 
+        possible_walls = []
+
+        # Check which maze boundary the cell touches
+
+        if row == 0:
+            possible_walls.append(Direction.TOP)
+
+        if row == self.rows - 1:
+            possible_walls.append(Direction.BOTTOM)
+
+        if col == 0:
+            possible_walls.append(Direction.LEFT)
+
+        if col == self.cols - 1:
+            possible_walls.append(Direction.RIGHT)
+
+        # If cell is not on boundary we assign an opening on the top by default
+        if not possible_walls:
+            print(f"Cell {position} is not on the boundary, so we create an opening on the top by default")
+            return Direction.TOP
+
+        # Randomly choose one valid outer wall
+        opening_direction = random.choice(possible_walls)
+
+        # Remove that wall
+        self.grid[row][col].walls[opening_direction] = False
+
+        return opening_direction
+
+    def reset(self):
+        self.maze_generated = False
+        self.stack = []
+        self.current_cell = self.grid[self.start[0]][self.start[1]]
+        self.visited_cells = [[False] * self.cols for _ in range(self.rows)]
+
+        self.action_log = []
+
+        for row in self.grid:
+            for cell in row:
+                cell.walls = {
+                    Direction.TOP: True,
+                    Direction.RIGHT: True,
+                    Direction.BOTTOM: True,
+                    Direction.LEFT: True
+                }
