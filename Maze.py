@@ -105,6 +105,13 @@ class Maze:
         else:
             self.maze_generated = True
 
+        if self.allow_cycles:
+            cycle = self.try_add_cycle()
+
+            if cycle:
+                a, b = cycle
+                self.action_log.append((a, b, "cycle"))
+
     def get_unvisited_neighbors(self, cell):
         neighbors = []
         directions = [(Direction.TOP, (cell.row - 1, cell.col)),
@@ -123,5 +130,39 @@ class Maze:
     def remove_wall(self, current_cell, next_cell, direction):
         current_cell.walls[direction] = False
         next_cell.walls[OPPOSITE[direction]] = False
+
+    def try_add_cycle(self):
+        # For the whole maze generation process, 5% of the time we attempt to add a cycle by removing a random wall between two already visited cells. This adds some loops to the maze
+
+        if random.random() > 0.05:
+            return
+
+        # pick current region first
+        base_cell = self.current_cell
+
+        directions = [
+            (Direction.TOP, (-1, 0)),
+            (Direction.BOTTOM, (1, 0)),
+            (Direction.LEFT, (0, -1)),
+            (Direction.RIGHT, (0, 1)),
+        ]
+
+        candidates = []
+
+        for direction, (dr, dc) in directions:
+            r, c = base_cell.row + dr, base_cell.col + dc
+
+            if 0 <= r < self.rows and 0 <= c < self.cols:
+                neighbor = self.grid[r][c]
+
+                # must already be part of maze
+                if self.visited_cells[r][c] and base_cell.walls[direction]:
+                    candidates.append((neighbor, direction))
+
+        if candidates:
+            neighbor, direction = random.choice(candidates)
+            self.remove_wall(base_cell, neighbor, direction)
+
+            return (base_cell, neighbor)
 
 
