@@ -72,3 +72,36 @@ class Maze:
         self.grid[row][col].walls[opening_direction] = False
 
         return opening_direction
+
+    # Added for testing to generate and observe the final maze 
+    def generate_maze(self):
+        while not self.maze_generated:
+            self.generate_step()
+
+    def generate_step(self):
+        neighbors = self.get_unvisited_neighbors(self.current_cell)
+
+        if neighbors:
+            next_cell, direction = random.choice(neighbors)
+            self.remove_wall(self.current_cell, next_cell, direction)
+
+            # LOG MOVE
+            self.action_log.append(
+                (self.current_cell, next_cell, "move")
+            )
+
+            self.stack.append(self.current_cell)
+
+            self.visited_cells[next_cell.row][next_cell.col] = True
+            self.current_cell = next_cell
+
+        elif self.stack:
+            self.current_cell = self.stack.pop()
+            self.action_log.append(
+                (self.current_cell, None, "backtrack")
+            )
+
+
+        else:
+            self.maze_generated = True
+
