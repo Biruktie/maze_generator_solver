@@ -105,3 +105,23 @@ class Maze:
         else:
             self.maze_generated = True
 
+    def get_unvisited_neighbors(self, cell):
+        neighbors = []
+        directions = [(Direction.TOP, (cell.row - 1, cell.col)),
+                      (Direction.BOTTOM, (cell.row + 1, cell.col)),
+                      (Direction.RIGHT, (cell.row, cell.col + 1)),
+                      (Direction.LEFT, (cell.row, cell.col - 1))]
+
+        for direction, (row, col) in directions:
+            if 0 <= row < self.rows and 0 <= col < self.cols:
+                neighbor = self.grid[row][col]
+                if not self.visited_cells[row][col]:
+                    neighbors.append((neighbor, direction))
+
+        return neighbors
+
+    def remove_wall(self, current_cell, next_cell, direction):
+        current_cell.walls[direction] = False
+        next_cell.walls[OPPOSITE[direction]] = False
+
+
