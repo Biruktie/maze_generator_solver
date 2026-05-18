@@ -1,4 +1,5 @@
 import pygame
+from Direction import Direction
 
 
 class Renderer:
@@ -18,6 +19,46 @@ class Renderer:
         y = cell.row * self.cell_size
         return x, y
 
+    def draw_maze(self):
+        for row in self.maze.grid:
+            for cell in row:
+                x, y = self.get_pos(cell)
+                s = self.cell_size
+
+                if cell.walls[Direction.TOP]:
+                    pygame.draw.line(
+                        self.screen,
+                        (0, 0, 0),
+                        (x, y),
+                        (x + s, y)
+                    )
+
+                if cell.walls[Direction.LEFT]:
+                    pygame.draw.line(
+                        self.screen,
+                        (0, 0, 0),
+                        (x, y),
+                        (x, y + s)
+                    )
+
+                if cell.walls[Direction.BOTTOM]:
+                    pygame.draw.line(
+                        self.screen,
+                        (0, 0, 0),
+                        (x, y + s),
+                        (x + s, y + s)
+                    )
+
+                if cell.walls[Direction.RIGHT]:
+                    pygame.draw.line(
+                        self.screen,
+                        (0, 0, 0),
+                        (x + s, y),
+                        (x + s, y + s)
+                    )
+
     def render_generation(self):
-        self.screen.fill((255, 255, 255))
+        self.screen.fill((255,255,255))
+        self.draw_maze()
+
         pygame.display.update()
