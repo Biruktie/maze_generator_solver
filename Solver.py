@@ -45,3 +45,27 @@ class Solver:
                     valid_neighbors.append((next_cell, Direction.RIGHT))
 
         return valid_neighbors
+
+    def solve_step(self):
+        if self.current_cell == self.end_cell:
+            self.solved = True
+            self.finished = True
+
+            return
+
+        neighbors = self.get_valid_neighbors(self.current_cell)
+        if neighbors:
+            next_cell, direction = random.choice(neighbors)
+            self.stack.append(self.current_cell)
+
+            self.current_cell = next_cell
+            self.visited.add((next_cell.row, next_cell.col))
+        else:
+            if self.stack:
+                prev_cell = self.stack.pop()
+
+                self.current_cell = prev_cell
+            else:
+                self.finished = True
+                return
+
