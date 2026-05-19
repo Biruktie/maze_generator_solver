@@ -14,8 +14,12 @@ class Solver:
         self.visited = set()
         self.visited.add((self.start_cell.row, self.start_cell.col))
 
+        self.dead_ends = set()
+
         self.solved = False
         self.finished = False
+
+        self.solution_path = []
 
     def get_valid_neighbors(self, current_cell):
         valid_neighbors = []
@@ -50,6 +54,8 @@ class Solver:
         if self.current_cell == self.end_cell:
             self.solved = True
             self.finished = True
+            self.solution_path = self.stack.copy()
+            self.solution_path.append(self.current_cell)
 
             return
 
@@ -61,6 +67,9 @@ class Solver:
             self.current_cell = next_cell
             self.visited.add((next_cell.row, next_cell.col))
         else:
+            dead_end = self.current_cell
+            self.dead_ends.add((dead_end.row, dead_end.col))
+
             if self.stack:
                 prev_cell = self.stack.pop()
 
@@ -68,4 +77,5 @@ class Solver:
             else:
                 self.finished = True
                 return
+
 
