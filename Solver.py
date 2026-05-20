@@ -1,13 +1,17 @@
 from Direction import Direction
 import random
 class Solver:
-    def __init__(self, maze):
+    def __init__(self, maze,algorithm="dfs"):
+        self.algorithm = algorithm
         self.maze = maze
 
         self.start_cell = maze.grid[maze.start[0]][maze.start[1]]
+        self.end_cell = maze.grid[maze.end[0]][maze.end[1]]
+
+        self.x = self.start_cell.row
+        self.y = self.start_cell.col
 
         self.current_cell = self.start_cell
-        self.end_cell = maze.grid[maze.end[0]][maze.end[1]]
 
         self.stack = []
 
@@ -15,11 +19,22 @@ class Solver:
         self.visited.add((self.start_cell.row, self.start_cell.col))
 
         self.dead_ends = set()
+        self.turn_ends = set()
+
+        self.solution_path = []
 
         self.solved = False
         self.finished = False
 
-        self.solution_path = []
+        self.directions = [
+            Direction.TOP,
+            Direction.RIGHT,
+            Direction.BOTTOM,
+            Direction.LEFT
+        ]
+        self.dir_index = 1
+
+        self.steps = 0
 
     def get_valid_neighbors(self, current_cell):
         valid_neighbors = []
