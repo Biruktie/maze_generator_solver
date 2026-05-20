@@ -117,6 +117,24 @@ class Solver:
         if direction == Direction.RIGHT:
             return 0, 1
     
+    def turn_right(self):
+        self.dir_index = (self.dir_index + 1) % 4
+
+    def turn_left(self):
+        self.dir_index = (self.dir_index - 1) % 4
+
+    def turn_back(self):
+        self.dir_index = (self.dir_index + 2) % 4
+
+    def cur_dir(self):
+        return self.directions[self.dir_index]
+
+    def right_dir(self):
+        return self.directions[(self.dir_index + 1) % 4]
+
+    def left_dir(self):
+        return self.directions[(self.dir_index - 1) % 4]
+    
     def can_move(self, x, y, dx, dy, direction):
         nx, ny = x + dx, y + dy
 
