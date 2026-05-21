@@ -36,6 +36,12 @@ class Solver:
 
         self.steps = 0
 
+    def step(self):
+        if self.algorithm == "dfs":
+            self.solve_step()
+        elif self.algorithm == "shoulder":
+            self.shoulder_to_wall()
+
     def get_valid_neighbors(self, current_cell):
         valid_neighbors = []
 
@@ -142,3 +148,46 @@ class Solver:
             return False
 
         return self.is_open(x, y, direction)
+
+    def shoulder_to_wall(self):
+        self.steps += 1
+        if self.steps > 2000:
+            self.finished = True
+            return
+
+        if self.current_cell == self.end_cell:
+            self.solved = True
+            self.finished = True
+            return
+
+        x, y = self.x, self.y
+
+        d = self.right_dir()
+        dx, dy = self.move_nums(d)
+
+        if self.can_move(x, y, dx, dy, d):
+            self.turn_right()
+            self.move(dx, dy)
+            return
+
+        d = self.cur_dir()
+        dx, dy = self.move_nums(d)
+        if self.can_move(x, y, dx, dy, d):
+            self.move(dx, dy)
+            return
+
+        d = self.left_dir()
+        dx, dy = self.move_nums(d)
+        if self.can_move(x, y, dx, dy, d):
+            self.turn_left()
+            self.move(dx, dy)
+            return
+
+        self.turn_back()
+        d = self.cur_dir()
+        dx, dy = self.move_nums(d)
+        if self.can_move(x, y, dx, dy, d):
+            self.turn_ends.add((self.x, self.y))
+            self.move(dx, dy)
+
+        
