@@ -52,28 +52,34 @@ class Renderer:
                 if cell.walls[Direction.RIGHT]:
                     pygame.draw.line(self.screen,(0,0,0),(x+s,y),(x+s,y+s))
 
-    def render_solver(self):
-        self.screen.fill((255,255,255))
+        def render_solver(self):
+            self.screen.fill((255, 255, 255))
 
-        for row, col in self.solver.visited:
-            cell = self.maze.grid[row][col]
-            self.draw_cell(cell, (200,200,200))
+            for row, col in self.solver.visited:
+                cell = self.maze.grid[row][col]
+                self.draw_cell(cell, (200, 200, 200))
 
-        for row, col in self.solver.dead_ends:
-            cell = self.maze.grid[row][col]
-            self.draw_cell(cell, (0,0,255))
+            for row, col in self.solver.dead_ends:
+                cell = self.maze.grid[row][col]
+                self.draw_cell(cell, (0, 0, 255))
 
-        for cell in self.solver.solution_path:
-            self.draw_cell(cell, (0,255,0))
+            for row, col in self.solver.turn_ends:
+                cell = self.maze.grid[row][col]
+                self.draw_cell(cell, (0, 0, 255))
 
-        self.draw_cell(
-            self.solver.current_cell,
-            (255,0,0)
-        )
+            for cell in self.solver.solution_path:
+                self.draw_cell(cell, (0, 255, 0))
 
-        self.draw_maze()
+            x = self.solver.current_cell.col * self.cell_size + (self.cell_size // 2)
+            y = self.solver.current_cell.row * self.cell_size + (self.cell_size // 2)
 
-        pygame.display.update()
+            pygame.draw.circle(self.screen, (255, 0, 0), (x, y), 4)
+            self.draw_cell(self.solver.start_cell, (0, 0, 0))
+            self.draw_cell(self.solver.end_cell, (0, 0, 0))
+
+            self.draw_maze()
+
+            pygame.display.update()
 
     def render_generation(self):
         self.screen.fill((255,255,255))
